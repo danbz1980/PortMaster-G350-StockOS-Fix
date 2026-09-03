@@ -1,56 +1,131 @@
 # PortMaster G350 StockOS Fix
 
-## BatleXP G350 / StockOS controller support
+Hardware-verified controller fix for the **BatleXP G350** running **StockOS**.
 
-This package documents a controller-detection fix for **BatleXP G350** handhelds running **StockOS** and using PortMaster.
+This project provides a minimal and reversible fix for PortMaster controller detection and the `SELECT + START` exit hotkey on the BatleXP G350.
 
-### What was verified on real hardware
+## Status
 
-- Device: BatleXP G350
-- SoC: Rockchip RK3326
-- Dual analog sticks
-- Linux input device: `batlexp_joypad`
-- Event device: `/dev/input/by-path/platform-batlexp-joypad-event-joystick`
-- SDL GUID: `1900c510010000000300000011010000`
-- SDL mapping: `batlexp_joypad`
-- SELECT: SDL button `b12`
-- START: SDL button `b13`
-- **SELECT + START successfully terminated a test target through gptokeyb.**
+✅ Tested on real hardware  
+✅ BatleXP G350  
+✅ RK3326  
+✅ StockOS  
+✅ Dual analog sticks  
+✅ SDL 2.28.5  
+✅ SELECT + START exit hotkey verified
 
-The key problem was that the standard PortMaster `get_controls()` device-detection list did not include the G350 event-device path. Without that branch, the controller GUID was not selected for the temporary SDL database used by PortMaster.
+> This is a community-developed fix. It is not official PortMaster support unless and until the changes are accepted upstream.
 
-PortMaster's current architecture uses `control.txt` to detect devices and select controller mappings; `gptokeyb` provides the standard force-quit mechanism.
+---
 
-## Fix
+## The problem
 
-Two minimal changes are made:
+On the tested BatleXP G350 configuration, PortMaster did not have a specific device-detection entry for the G350 controller.
 
-1. Add a G350 branch to `control.txt` using the real event-device path and GUID.
-2. Add the verified G350 SDL mapping to `gamecontrollerdb.txt`.
+As a result, the controller was not correctly selected by the PortMaster control configuration and the `SELECT + START` exit hotkey did not work inside ports.
 
-`device_info.txt`, `funcs.txt`, `gptokeyb`, `gptokeyb2`, kernel files and DTBs are **not required** for this fix.
+The G350 itself correctly exposes its controller through Linux input and SDL.
 
-## Installation
+---
 
-1. Back up the existing PortMaster `control.txt` and `gamecontrollerdb.txt`.
-2. Copy the two modified files into the PortMaster directory.
-3. Restart EmulationStation.
-4. Launch a port and test **SELECT + START**.
+## Hardware and SDL identification
 
-For the ready-to-use package, run `install.sh`. It creates timestamped backups before replacing files. `restore.sh` restores the most recent backup made by the installer.
+The tested controller is identified by Linux as:
 
-## Important
-
-This is a hardware-verified community fix, not an official PortMaster release. It should be treated as a workaround until G350 support is accepted upstream.
-
-## Technical evidence
-
-The SDL test detected one `batlexp_joypad` with 4 axes and 17 buttons and reported the GUID above. The mapping was accepted by SDL 2.28.5. A separate gptokeyb test using the same mapping confirmed that SELECT+START closed the target successfully.
-
-## Upstream
-
-PortMaster documents `control.txt` device detection and `gamecontrollerdb.txt` mappings as part of its controller setup, and documents gptokeyb as the mechanism used for force-quitting ports. This package is intended to provide the exact G350 information needed for upstream support.
-
-## License
-
-See `LICENSE`. The modified PortMaster files remain under the licensing terms of their respective upstream projects.
+```text
+batlexp_joypad
+Input devices:
+/dev/input/event2
+/dev/input/js0
+The controller exposes:
+4 axes
+17 buttons
+0 hats
+SDL version:
+SDL 2.28.5
+Verified SDL GUID:
+1900c510010000000300000011010000
+SDL mapping
+The verified SDL mapping is:
+1900c510010000000300000011010000,batlexp_joypad,a:b0,b:b1,x:b2,y:b3,leftshoulder:b4,rightshoulder:b5,dpup:b8,dpdown:b9,dpleft:b10,dpright:b11,leftx:a0,lefty:a1,rightx:a2,righty:a3,lefttrigger:b6,righttrigger:b7,back:b12,start:b13,crc:10c5,platform:Linux
+The important buttons for the PortMaster exit hotkey are:
+SELECT = b12
+START  = b13
+Fix
+The fix consists of two small changes:
+1. BatleXP G350 detection
+control.txt detects the G350 through:
+/dev/input/by-path/platform-batlexp-joypad-event-joystick
+and assigns the verified SDL GUID:
+1900c510010000000300000011010000
+The configuration uses:
+param_device=g350
+ANALOGSTICKS=2
+LOWRES=N
+2. SDL controller mapping
+gamecontrollerdb.txt contains the verified G350 SDL mapping, including:
+back:b12
+start:b13
+Verification
+The controller identification was verified using the G350's native SDL tools.
+The controller was detected as:
+batlexp_joypad
+with:
+4 axes
+17 buttons
+and the verified GUID:
+1900c510010000000300000011010000
+The gptokeyb test subsequently confirmed that pressing:
+SELECT + START
+correctly closed the target process.
+Installation
+Download the latest release from the Releases section.
+The release package contains an installer and a restoration script.
+Before modifying PortMaster, the installer creates a backup of the files it changes.
+Only these PortMaster files are modified:
+control.txt
+gamecontrollerdb.txt
+No kernel, DTB, gptokeyb, gptokeyb2, device_info.txt or funcs.txt changes are required for this fix.
+Restoration
+If the fix causes any problem, use:
+restore.sh
+to restore the previous PortMaster configuration.
+Compatibility
+This fix has been verified on:
+Hardware
+Status
+BatleXP G350
+✅ Tested
+RK3326
+✅ Tested
+StockOS
+✅ Tested
+Dual analog sticks
+✅ Tested
+SDL 2.28.5
+✅ Tested
+Important
+Only one physical BatleXP G350 has been used for the hardware verification documented in this repository.
+Therefore, this project does not claim that every G350 revision or StockOS image uses exactly the same SDL GUID.
+If another G350 reports a different GUID, please open an issue and provide the SDL identification information.
+Release
+v0.3
+Initial hardware-verified release.
+See the Releases section for the ready-to-install package.
+Contributing
+If you own a BatleXP G350 and can test this fix, feedback is welcome.
+Useful information includes:
+StockOS version
+SDL version
+controller name
+SDL GUID
+number of axes/buttons
+whether SELECT + START exits ports correctly
+Please open an issue with the results.
+Upstream
+The long-term goal is to have BatleXP G350 support incorporated into PortMaster itself.
+Until that happens, this repository provides a documented and reversible community fix for affected G350 users.
+License
+See LICENSE.
+```text
+Improve documentation and hardware verification details

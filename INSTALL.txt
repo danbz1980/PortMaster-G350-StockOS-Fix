@@ -1,0 +1,12 @@
+QUICK INSTALL
+
+1. Copy this folder to /roms/ports/ (or /storage/roms/ports/).
+2. Run install.sh from the BatleXP G350.
+3. Restart EmulationStation.
+4. Test any PortMaster port.
+5. Verify SELECT + START exits the port.
+
+The installer detects the PortMaster directory, backs up control.txt and
+gamecontrollerdb.txt, then installs only the two modified files.
+
+If needed, run restore.sh to restore the latest backup.

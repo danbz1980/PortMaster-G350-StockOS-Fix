@@ -127,5 +127,3 @@ The long-term goal is to have BatleXP G350 support incorporated into PortMaster 
 Until that happens, this repository provides a documented and reversible community fix for affected G350 users.
 License
 See LICENSE.
-```text
-Improve documentation and hardware verification details

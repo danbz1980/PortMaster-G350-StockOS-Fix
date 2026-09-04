@@ -2,6 +2,8 @@
 
 Fix de compatibilidad verificado en hardware para la **BatleXP G350** con **StockOS**.
 
+![PortMaster G350 StockOS Fix](assets/PortMaster-G350-StockOS-Fix-Social-Preview.jpg)
+
 Este proyecto proporciona una solución mínima y reversible para la detección del mando por PortMaster y para recuperar la combinación de salida **SELECT + START** dentro de los ports.
 
 ## Estado

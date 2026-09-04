@@ -1,5 +1,7 @@
 # PortMaster G350 StockOS Fix
 
+![PortMaster G350 StockOS Fix](assets/PortMaster-G350-StockOS-Fix-Social-Preview.jpg)
+
 Verified hardware compatibility fix for the **BatleXP G350** running **StockOS**.
 
 This project provides a minimal and reversible solution for PortMaster controller detection and restores the **SELECT + START** exit combination inside ports.

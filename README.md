@@ -1,6 +1,6 @@
 # PortMaster G350 StockOS Fix
 
-![PortMaster G350 StockOS Fix](assets/PortMaster-G350-StockOS-Fix-Social-Preview.jpg)
+![PortMaster G350 StockOS Fix](assets/1788865082792.png)
 
 Verified hardware compatibility fix for the **BatleXP G350** running **StockOS**.
 
